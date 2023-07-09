@@ -1,0 +1,44 @@
+{% extends 'chat/group_chat.html' %}
+{% block hide %}{% endblock %}
+{% block messages %}
+    {% for message in messages %}
+    {% if message.group_sender == request.user %}
+<div class="card-panel right" style="width: 75%; position: relative">
+    <div style="position: absolute; top: 0; left:3px; font-weight: bolder" class="title">Вы</div>
+    {{ message }}
+</div>
+    {% else %}
+<div class="card-panel left blue lighten-5" style="width: 75%; position: relative">
+    <div style="position: absolute; top: 0; left:3px; font-weight: bolder" class="title">{{ message.group_sender }}</div>
+    {{ message }}
+</div>
+    {% endif %}
+    {% endfor %}
+<script>
+let chat_box = '<div class="card-panel right" style="width: 75%; position: relative">' +
+        '<div style="position: absolute; top: 0; left:3px; font-weight: bolder" class="title">{sender}</div>' +
+        '{message}' +
+        '</div>';
+function groupReceive() {
+    $.get('/api/group_messages/'+ chat_id, function (data) {
+        console.log(data);
+        if (data.length !== 0)
+        {
+            for(let i=0;i<data.length;i++) {
+                console.log(data[i]);
+                let box = chat_box.replace('{sender}', data[i].sender);
+                box = box.replace('{message}', data[i].message);
+                box = box.replace('right', 'left blue lighten-5');
+                $('#board').append(box);
+                scrolltoend();
+            }
+        }
+    })
+}
+$(function () {
+    $('#chat{{ item.id }}').addClass('active');
+    //Call receive function each 1 seconds to check for new messages in the database
+    setInterval(groupReceive,1000)
+})
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'chat/index.html' %}
+{% block body %}
+{% load static %}
+<link href="{% static 'css/group_chat.css' %}" rel="stylesheet" />
+<nav class="blue lighten-3">
+    <div class="nav-wrapper container">
+      <a href="{% url 'chats' %}" class="brand-logo">Пользователи</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{% url 'group_chats' %}">Групповые чаты</a></li>
+          <li><a href="{% url 'profile_view' %}">{{ request.user.username }}</a></li>
+          <li><a href="{% url 'logout' %}"><i class="material-icons">power_settings_new</i></a></li>
+      </ul>
+    </div>
+</nav>
+    <div class="section" style="height: 80vh">
+    <div class="row">
+        <div class="col s3">
+        <div class="card">
+            <div class="collection">
+            <a href="{% url 'group_chat_create' %}" class="mybtn">Создать чат</a>
+                {% if group_chats %}
+                    {% for item in group_chats %}
+                        <div class="wrapper1 avatar1">
+                            <img src="{{ item.photo_chat.url }}" alt="My image">
+                            <div>
+                                {% if request.user.id == item.chat_author_id %}
+                                    <a href="{% url 'group_chat_users' item.id %}" class="mybtns">Добавление/удаление пользователя</a>
+                                    <a href="{% url 'group_chat_edit' item.id %}" class="mybtns">Редактировать</a>
+                                    <a href="{% url 'group_chat_delete' item.id %}" class="mybtns">Удалить</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <a href="{% url 'group_chat' item.id %}" id="item{{ item.id }}" class="collection-item row">
+                        <div class="textright">
+                            <p>{{ item.group_chat_title }}</p>
+                        </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div>
+                        <h2>Вы не создали чат, или не приглашены ни в один из созданных</h2>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+        <div class="col s9">
+            <div>
+                <strong>Владелец чата: {{ author }} Пользователи: </strong>
+                {% for user in users_in_chat %}
+                    <strong>|{{ user.username }}|</strong>
+                {% endfor %}
+            </div>
+            <div class="card">
+            <div id="board" class="section grey lighten-3" style="height: 68vh; padding: 5px; overflow-y: scroll">
+                {% block messages %}
+
+                {% endblock %}
+            </div>
+            <form id="chat-box" class="form-group {% block hide %}hide{% endblock %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col s11">
+                        <div class="input-field">
+                            <input id="id_message" name="message" type="text" placeholder="Наберите своё сообщение здесь...">
+                        </div>
+                    </div>
+                    <div class="col s1" style="line-height: 80px">
+                        <button class="btn btn-floating blue lighten-2 waves-effect waves-light"><i class="material-icons">send</i></button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'js/chat.js' %}"></script>
+    <script>
+        function groupSend(group_chat, group_sender, group_message) {
+            $.post('/api/group_messages/', '{"group_chat": "'+ group_chat +'","group_sender": "'+ group_sender +'","group_message": "'+ group_message +'" }', function (data) {
+                console.log(data);
+                let box = chat_box.replace('{sender}', "Вы");
+                box = box.replace('{message}', group_message);
+                $('#board').append(box);
+                scrolltoend();
+            })
+        }
+        // For receiving and sending url REST
+        chat_id = "{{ chat_id }}";
+
+        //For sending
+        $(function () {
+            scrolltoend();
+            $('#chat-box').on('submit', function (event) {
+                event.preventDefault();
+                let message = $('#id_message');
+                groupSend('{{ chat_id }}', '{{ request.user.username }}', message.val());
+                message.val('');
+            })
+        })
+    </script>
+{% endblock %}

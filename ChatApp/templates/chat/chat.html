@@ -1,0 +1,120 @@
+{% extends 'chat/index.html' %}
+{% block body %}
+<style>
+    .wrapper1 {
+        width: 150px;
+        height: 200px;
+        border: 5px solid #515151;
+        display: flex;
+        justify-content: left;
+        margin-top: 10px;
+    }
+    .avatar1 img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+     }
+    .right {
+        float:right;
+        margin: 7px 7px 7px 0; /* Отступы вокруг картинки */
+        justify-content: center;
+    }
+    .parent {
+      display: flex;
+      justify-content: left;
+      margin-top: 10px;
+    }
+    .child {
+      border: 2px #e0cfb1;
+      margin: 20px;
+    }
+    h2 {
+      font-family: 'Playfair Display SC', serif;
+      font-weight: 500;
+      letter-spacing: 1px;
+      font-size: 48px;
+      color: #222222;
+      text-align: center;
+    }
+    .textright {
+      margin: 0 10px 20px 50px;;
+      font-size: 32px;
+    }
+</style>
+<nav class="blue lighten-3">
+    <div class="nav-wrapper container">
+      <a href="{% url 'chats' %}" class="brand-logo">Пользователи</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{% url 'group_chats' %}">Групповые чаты</a></li>
+          <li><a href="{% url 'profile_view' %}">{{ request.user.username }}</a></li>
+          <li><a href="{% url 'logout' %}"><i class="material-icons">power_settings_new</i></a></li>
+      </ul>
+    </div>
+</nav>
+    <div class="section" style="height: 80vh">
+    <div class="row">
+        <div class="col s3">
+        <div class="card">
+            <div class="collection">
+                {% if users %}
+                    {% for user in users %}
+                    <a href="{% url 'chat' request.user.id user.id %}" id="user{{ user.id }}" class="collection-item row">
+                        <div class="wrapper1 avatar1">
+                            <img src="{{ user.profilephoto.photo.url }}" alt="My image">
+                            <div class="textright">
+                                <p>{{ user.username }}</p>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div>
+                        <h2>Пока некому написать :(</h2>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+        <div class="col s9">
+            <div class="card">
+            <div id="board" class="section grey lighten-3" style="height: 68vh; padding: 5px; overflow-y: scroll">
+                {% block messages %}
+
+                {% endblock %}
+            </div>
+            <form id="chat-box" class="form-group {% block hide %}hide{% endblock %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col s11">
+                        <div class="input-field">
+                            <input id="id_message" name="message" type="text" placeholder="Наберите своё сообщение здесь...">
+                        </div>
+                    </div>
+                    <div class="col s1" style="line-height: 80px">
+                        <button class="btn btn-floating blue lighten-2 waves-effect waves-light"><i class="material-icons">send</i></button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'js/chat.js' %}"></script>
+    <script>
+        // For receiving
+        sender_id = "{{ receiver.id }}";
+        receiver_id = "{{ request.user.id }}";
+
+        //For sending
+        $(function () {
+            scrolltoend();
+            $('#chat-box').on('submit', function (event) {
+                event.preventDefault();
+                let message = $('#id_message');
+                send('{{ request.user.username }}', '{{ receiver.username }}', message.val());
+                message.val('');
+            })
+        })
+    </script>
+{% endblock %}

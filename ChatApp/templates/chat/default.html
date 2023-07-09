@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.min.css' %}"  media="screen,projection"/>
+
+      <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+      <!--Import jQuery before materialize.js-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/chat.js' %}"></script>
+ <style>
+    h2 {
+      font-family: 'Playfair Display SC', serif;
+      font-weight: 500;
+      letter-spacing: 1px;
+      font-size: 48px;
+      color: #222222;
+      text-align: center;
+    }
+    .wrapper {
+        width: 500px;
+        height: 700px;
+        border: 5px solid #515151;
+    }
+    .mybtn{
+      color: black;
+      background-color: #87CEFA;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px; /* Уголки */
+    }
+
+    .container {
+      width: 30%;
+    }
+</style>
+</head>
+<body>
+<nav class="blue lighten-3">
+    <div class="nav-wrapper container">
+      <a href="{% url 'chats' %}" class="brand-logo">Пользователи</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{% url 'group_chats' %}">Групповые чаты</a></li>
+          <li><a href="{% url 'profile_view' %}">{{ request.user.username }}</a></li>
+          <li><a href="{% url 'logout' %}"><i class="material-icons">power_settings_new</i></a></li>
+      </ul>
+    </div>
+</nav>
+{% block content %}
+  {{ flatpage.content }}
+{% endblock content %}
+</body>
+</html>

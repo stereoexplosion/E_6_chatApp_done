@@ -1,0 +1,14 @@
+{% extends 'chat/default.html' %}
+
+{% block content %}
+{% load static %}
+<link href="{% static 'css/group_chat.css' %}" rel="stylesheet" />
+<div class="wrapper container">
+  <h2>Создайте чат здесь!</h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="mybtn" value="Добавить чат">
+    </form>
+</div>
+{% endblock content %}

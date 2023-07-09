@@ -1,0 +1,37 @@
+{% extends 'chat/default.html' %}
+
+{% block content %}
+{% load static %}
+<link href="{% static 'css/group_chat.css' %}" rel="stylesheet" />
+<div class="bd">
+    <div class="parent">
+        <div class="wrapper avatar"><img src="{{ request.user.profilephoto.photo.url }}" alt="My image"></div>
+        <div class="child">
+            <h2>Профиль пользователя {{ request.user.username }}</h2>
+            <form id="register-form" class="form-group" method="POST">
+            {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s12">
+                        {{ form_nick.username }}
+                        <label for="id_username" data-error="Username already taken">Введите новый никнейм</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                    <div class="right">
+                        <button class="btn" name="change" value="nickname">Изменить никнейм</button>
+                    </div>
+                    </div>
+                </div>
+        </form>
+        </div>
+    </div>
+    <div class="parent">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+           {{ form_photo.as_p }}
+          <button type="submit" class="btn" name="change" value="photo">Загрузить фото</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

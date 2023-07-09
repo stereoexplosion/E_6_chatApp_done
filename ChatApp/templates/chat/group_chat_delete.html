@@ -1,0 +1,15 @@
+{% extends 'chat/default.html' %}
+
+{% block content %}
+{% load static %}
+<link href="{% static 'css/group_chat.css' %}" rel="stylesheet" />
+<div class="wrapper container">
+    <h2>Удаление чата</h2>
+    <hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        <h2>Удаляем чат "{{ object.group_chat_title }}"?</h2>
+        <input type="submit" class="mybtn" value="Удалить" />
+    </form>
+</div>
+{% endblock content %}

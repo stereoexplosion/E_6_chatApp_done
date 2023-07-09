@@ -1,0 +1,27 @@
+{% extends 'chat/default.html' %}
+
+{% block content %}
+{% load static %}
+<link href="{% static 'css/group_chat.css' %}" rel="stylesheet" />
+
+<div>
+    <h2>Удаление пользователей из чата {{ chat.group_chat_title }}:</h2>
+    {% for user in users_in_chat %}
+    {% csrf_token %}
+    <form class="grusers" method="post">
+        <button class="mybtn" type="submit" name="delete_user" value="{{ user.id }}">{{ user }}</button>
+    </form>
+    {% endfor %}
+</div>
+<hr>
+<div>
+    <h2>Добавление пользователей в чат {{ chat.group_chat_title }}</h2>
+    {% for user in users_not_in_chat %}
+    {% csrf_token %}
+    <form class="grusers" method="post">
+        <button class="mybtn"  type="submit" name="add_user" value="{{ user.id }}">{{ user }}</button>
+    </form>
+    {% endfor %}
+</div>
+
+{% endblock content %}
